@@ -9,6 +9,7 @@ import pytest
 from src.clubs import (
     _city_from_address,
     _make_club,
+    _merge_provincial,
     _parse_nl_pdfs,
     _province_from_address,
     apply_suspects,
@@ -465,3 +466,56 @@ class TestApplySuspects:
 
         assert added == 0
         assert any("No resolution saved" in r.message for r in caplog.records)
+
+
+class TestMergeProvincial:
+    def test_name_match_backfills_missing_website_and_source(self, monkeypatch):
+        clubs = [{
+            "name": "Westlock Gators",
+            "province": "AB",
+            "province_name": "Alberta",
+            "website": "",
+            "source_url": "https://findaclub.swimming.ca/",
+        }]
+        provincial = [{
+            "name": "Westlock Gators",
+            "province": "AB",
+            "province_name": "Alberta",
+            "website": "https://www.gomotionapp.com/team/assawgsc/page/home",
+            "source_url": "https://swimalberta.ca/community/clubs/find-a-club/",
+        }]
+
+        monkeypatch.setattr("src.clubs._PROVINCIAL_SOURCES", [("AB", "html_divs_ab", "https://example.com")])
+        monkeypatch.setattr("src.clubs._fetch_provincial", lambda *args, **kwargs: provincial)
+
+        merged = _merge_provincial(clubs, unresolved=[])
+
+        assert merged == clubs
+        assert len(merged) == 1
+        assert merged[0]["website"] == "https://www.gomotionapp.com/team/assawgsc/page/home"
+        assert merged[0]["source_url"] == "https://swimalberta.ca/community/clubs/find-a-club/"
+
+    def test_name_match_does_not_overwrite_existing_website(self, monkeypatch):
+        clubs = [{
+            "name": "Westlock Gators",
+            "province": "AB",
+            "province_name": "Alberta",
+            "website": "https://westlockgators.ca",
+            "source_url": "https://findaclub.swimming.ca/",
+        }]
+        provincial = [{
+            "name": "Westlock Gators",
+            "province": "AB",
+            "province_name": "Alberta",
+            "website": "https://www.gomotionapp.com/team/assawgsc/page/home",
+            "source_url": "https://swimalberta.ca/community/clubs/find-a-club/",
+        }]
+
+        monkeypatch.setattr("src.clubs._PROVINCIAL_SOURCES", [("AB", "html_divs_ab", "https://example.com")])
+        monkeypatch.setattr("src.clubs._fetch_provincial", lambda *args, **kwargs: provincial)
+
+        merged = _merge_provincial(clubs, unresolved=[])
+
+        assert len(merged) == 1
+        assert merged[0]["website"] == "https://westlockgators.ca"
+        assert merged[0]["source_url"] == "https://findaclub.swimming.ca/"
