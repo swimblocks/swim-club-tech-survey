@@ -262,7 +262,8 @@ def _save_suspects(suspects: list[dict]) -> None:
 
 def _merge_provincial(clubs, unresolved, suspects_out=None):
     """Fetch each known provincial directory and add clubs missing from the national list."""
-    existing_names = {c["name"].lower() for c in clubs}
+    existing_by_name = {c["name"].lower(): c for c in clubs}
+    existing_names = set(existing_by_name)
     existing_sites = {c["website"].lower() for c in clubs if c["website"]}
 
     added = 0
@@ -272,10 +273,16 @@ def _merge_provincial(clubs, unresolved, suspects_out=None):
             name_key = club["name"].lower()
             site_key = club["website"].lower() if club["website"] else None
             if name_key in existing_names:
+                existing = existing_by_name[name_key]
+                if not existing.get("website") and club.get("website"):
+                    existing["website"] = club["website"]
+                    existing["source_url"] = club.get("source_url", existing.get("source_url", ""))
+                    existing_sites.add(site_key)
                 continue
             if site_key and site_key in existing_sites:
                 continue
             clubs.append(club)
+            existing_by_name[name_key] = club
             existing_names.add(name_key)
             if site_key:
                 existing_sites.add(site_key)
