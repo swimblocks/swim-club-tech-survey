@@ -121,7 +121,7 @@ def _write_run_info(df, ran_at):
         "",
         "**Data sources:** Club list assembled from the national Swimming Canada feed "
         "and several provincial directories — see "
-        "[docs/data_sources.md](https://github.com/gavinbee/canada-swim-tech-survey/blob/main/docs/data_sources.md) "
+        "[docs/data_sources.md](https://github.com/swimblocks/swim-club-tech-survey/blob/main/docs/data_sources.md) "
         "for the full list.",
         "",
         "**Published results:** https://gavinbee.github.io/canada-swim-tech-survey/",

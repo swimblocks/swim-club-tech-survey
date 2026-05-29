@@ -464,7 +464,7 @@ def generate_html(df, output_path):
   <p>Automated survey of swimming.ca-registered clubs and provincial associations</p>
   <p style="margin-top:.6rem;font-size:.8rem;opacity:.65;">
     Club list sourced from the Swimming Canada national feed and several
-    <a href="https://github.com/gavinbee/canada-swim-tech-survey/blob/main/docs/data_sources.md"
+    <a href="https://github.com/swimblocks/swim-club-tech-survey/blob/main/docs/data_sources.md"
        target="_blank" rel="noreferrer" style="color:#93c5fd;">provincial directories</a>.
   </p>
   {disclaimer_html}
@@ -477,7 +477,7 @@ def generate_html(df, output_path):
 </div>
 <h2>Full data</h2>
 <div style="margin-bottom:.75rem;">
-  <a href="https://github.com/gavinbee/canada-swim-tech-survey/releases/latest/download/results.csv"
+  <a href="https://github.com/swimblocks/swim-club-tech-survey/releases/latest/download/results.csv"
      style="display:inline-block;padding:.4rem .9rem;background:#2563EB;color:#fff;border-radius:6px;font-size:.85rem;text-decoration:none;font-weight:500;">
     &#8595; Download CSV
   </a>
@@ -485,7 +485,7 @@ def generate_html(df, output_path):
 {_table_html(df)}
 </main>
 <footer style="text-align:center;padding:1.5rem;font-size:.8rem;color:#94a3b8;">
-  <a href="https://github.com/gavinbee/canada-swim-tech-survey/releases/latest"
+  <a href="https://github.com/swimblocks/swim-club-tech-survey/releases/latest"
      target="_blank" rel="noreferrer">Release notes &amp; past datasets</a>
 </footer>
 </body>
