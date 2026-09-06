@@ -1,15 +1,15 @@
 # Canadian Swim Club Software Survey
 
 Automatically discovers every Swimming Canada–registered club, visits their website,
-and detects which team management / registration platform they use.
+and detects tech stack information for the club.  Currently, primarily focused on which team 
+management / registration platform a club uses.
+
 Results are saved to CSV and rendered as an interactive HTML report with Chart.js bar graphs.
 
 Club list sourced from the [Swimming Canada public club directory](https://www.swimming.ca).
 Individual club addresses are not stored or published.
 
 **[View latest report](https://swimblocks.github.io/swim-club-tech-survey/) · [Download past datasets](../../releases)**
-
-Built with assistance from [Claude](https://claude.ai) by Anthropic.
 
 ---
 
