@@ -7,7 +7,7 @@ Results are saved to CSV and rendered as an interactive HTML report with Chart.j
 Club list sourced from the [Swimming Canada public club directory](https://www.swimming.ca).
 Individual club addresses are not stored or published.
 
-**[View latest report](https://gavinbee.github.io/canada-swim-tech-survey/) · [Download past datasets](../../releases)**
+**[View latest report](https://swimblocks.github.io/swim-club-tech-survey/) · [Download past datasets](../../releases)**
 
 Built with assistance from [Claude](https://claude.ai) by Anthropic.
 
