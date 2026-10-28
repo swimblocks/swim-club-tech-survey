@@ -124,7 +124,7 @@ def _write_run_info(df, ran_at):
         "[docs/data_sources.md](https://github.com/swimblocks/swim-club-tech-survey/blob/main/docs/data_sources.md) "
         "for the full list.",
         "",
-        "**Published results:** https://gavinbee.github.io/canada-swim-tech-survey/",
+        "**Published results:** https://swimblocks.github.io/swim-club-tech-survey/",
         "",
         "**How to reproduce:** `python main.py --no-cache`",
     ]
