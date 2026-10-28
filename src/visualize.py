@@ -46,7 +46,6 @@ PLATFORM_URLS = {
     "Presto Sports":            "https://www.prestosports.com",
     "GoalLine (Stack Sports)":  "https://www.goalline.ca",
     "Jonas Club Software":      "https://www.jonasclub.com",
-    "SportsEngine":             "https://www.sportsengine.com",
     "SportsEngine HQ":          "https://www.sportsengine.com/hq",
     "TeamSnap":                 "https://www.teamsnap.com",
     "Jackrabbit":               "https://www.jackrabbittech.com",

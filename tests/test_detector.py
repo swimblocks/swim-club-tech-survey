@@ -213,6 +213,31 @@ class TestSportsEngineProducts:
         )
         assert detect("https://example.com")["software"] == "Unknown / Custom"
 
+    @pytest.mark.parametrize("html, final_url", [
+        ('<a href="https://user.sportngin.com/oauth/authorize">Sign in</a>', "https://example.com"),
+        ('<script>const login = "https://user.sportngin.com/oauth/authorize";</script>',
+         "https://example.com"),
+        ("Sign in", "https://user.sportngin.com/oauth/authorize"),
+        ('<a href="//USER.SPORTNGIN.COM/login">Sign in</a>', "https://example.com"),
+    ])
+    @patch("src.detector._get_session")
+    def test_shared_auth_does_not_identify_hq(self, mock_sess, html, final_url):
+        mock_sess.return_value.get.return_value = _page(html, final_url=final_url)
+        assert detect("https://example.com")["software"] == "Unknown / Custom"
+
+    @pytest.mark.parametrize("signal, expected", [
+        ("Powered by SportsEngine Motion", "SportsEngine Motion"),
+        ("Powered by SportsEngine HQ", "SportsEngine HQ"),
+        ('<script src="https://cdn1.sportngin.com/app.js"></script>', "SportsEngine HQ"),
+        ('<script src="/wp-content/app.js"></script>', "WordPress"),
+    ])
+    @patch("src.detector._get_session")
+    def test_shared_auth_preserves_other_signals(self, mock_sess, signal, expected):
+        mock_sess.return_value.get.return_value = _page(
+            '<a href="https://user.sportngin.com/oauth/authorize">Sign in</a>' + signal,
+        )
+        assert detect("https://example.com")["software"] == expected
+
 
 class TestHeaderDetection:
     @patch("src.detector._get_session")

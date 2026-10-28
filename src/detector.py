@@ -52,6 +52,12 @@ TIMEOUT = 12          # seconds per request
 #   "category"      – broad category for grouping in the report
 # -------------------------------------------------------------------
 
+# user.sportngin.com is shared authentication, not evidence of SportsEngine HQ.
+_HQ_NGIN_PATTERN = (
+    r"(?<![\w.-])(?!user\.sportngin\.com\b)"
+    r"(?:[\w-]+\.)*(?:sportngin|ngin)\.com\b"
+)
+
 PLATFORMS = {
     # ---- Swim-specific / Canadian-common ----
     # Commit Swimming — Canadian swim club platform (SPA hosted on Netlify;
@@ -191,9 +197,9 @@ PLATFORMS = {
     # ---- General sports management ----
     "SportsEngine HQ": {
         "url_patterns": [
-            r"sportsengine\.com/hq(?:[/?#]|$)", r"ngin\.com", r"sportsenginehq\.com",
+            r"sportsengine\.com/hq(?:[/?#]|$)", _HQ_NGIN_PATTERN, r"sportsenginehq\.com",
         ],
-        "text_patterns": [r"sportsengine\s*hq\b", r"ngin\.com"],
+        "text_patterns": [r"sportsengine\s*hq\b", _HQ_NGIN_PATTERN],
         "header_patterns": [],
         "category": "Sports management",
     },

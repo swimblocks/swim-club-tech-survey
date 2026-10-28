@@ -73,12 +73,15 @@ Falls back to **"Unknown / Custom"** when no signature matches.
 November 2024. Legacy `teamunify.com` and `gomotionapp.com` tenant URLs/assets,
 `motion.sportsengine.com`, and both historical brand names identify SportsEngine Motion.
 **SportsEngine HQ** is a separate product, identified by HQ branding, HQ URLs, or
-`ngin.com` / `sportngin.com` signatures. Generic "Powered by SportsEngine" branding
-alone does not identify either product.
+`ngin.com` / `sportngin.com` signatures, excluding shared authentication at
+`user.sportngin.com`. Generic "Powered by SportsEngine" branding and shared
+authentication alone do not identify either product.
 
 Cached CSVs and reports generated from past datasets normalize **TeamUnify** and
 **GoMotion** labels to **SportsEngine Motion**. Historical **SportsEngine** labels
-remain unchanged: the old generic signatures did not reliably distinguish products.
+become **Unknown / Custom** before the usual post-detection reclassification:
+the parent brand is not a product and the old signatures did not reliably
+distinguish products. Use `--no-cache` to detect the actual products afresh.
 Published release datasets are not rewritten.
 
 ### 3 — Report generation (`src/visualize.py`)

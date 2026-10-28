@@ -7,6 +7,7 @@ Splits "Unknown / Custom" into more meaningful buckets:
   - No Website                (invalid URLs such as Bing search pages)
 
 Normalizes historical TeamUnify / GoMotion labels to SportsEngine Motion.
+Ambiguous historical SportsEngine labels become Unknown / Custom.
 """
 
 import re
@@ -34,8 +35,10 @@ PLATFORM_ALIASES = {
 
 
 def normalize_platform_aliases(df: pd.DataFrame) -> pd.DataFrame:
-    """Return a copy with historical platform labels mapped to current products."""
+    """Normalize legacy products; discard ambiguous parent-brand classifications."""
     df = df.copy()
+    ambiguous = df["software"] == "SportsEngine"
+    df.loc[ambiguous, ["software", "category"]] = "Unknown / Custom"
     legacy = df["software"].isin(PLATFORM_ALIASES)
     df["software"] = df["software"].replace(PLATFORM_ALIASES)
     df.loc[legacy, "category"] = "Swim-specific"

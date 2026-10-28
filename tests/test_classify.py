@@ -120,7 +120,7 @@ class TestPriorityOrder:
 
 
 class TestNonUnknownRowsUntouched:
-    @pytest.mark.parametrize("software", ["SportsEngine Motion", "SportsEngine HQ", "SportsEngine"])
+    @pytest.mark.parametrize("software", ["SportsEngine Motion", "SportsEngine HQ"])
     def test_sportsengine_unchanged(self, software):
         df = _df([("Example Club", "ON", "https://example.com", software)])
         out = reclassify(df)
@@ -139,6 +139,14 @@ class TestNonUnknownRowsUntouched:
 
 
 class TestHistoricalPlatformAliases:
+    def test_generic_brand_is_not_a_product(self):
+        df = _df([("Example Club", "ON", "https://example.com", "SportsEngine")])
+        out = reclassify(df)
+        assert out.iloc[0]["software"] == "Unknown / Custom"
+        assert out.iloc[0]["category"] == "Unknown / Custom"
+        assert df.iloc[0]["software"] == "SportsEngine"
+        pd.testing.assert_frame_equal(reclassify(out), out)
+
     @pytest.mark.parametrize("alias", ["TeamUnify", "GoMotion"])
     def test_legacy_platform_normalized(self, alias):
         df = _df([("Example Club", "QC", "https://example.com", alias)])

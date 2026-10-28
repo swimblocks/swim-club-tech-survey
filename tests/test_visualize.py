@@ -91,6 +91,9 @@ class TestPlatformUrls:
         for platform in ["SportsEngine Motion", "SportsEngine HQ", "PoolQ", "WordPress", "Wix", "Amilia"]:
             assert platform in PLATFORM_URLS, f"{platform} missing from PLATFORM_URLS"
 
+    def test_generic_brand_is_not_a_product(self):
+        assert "SportsEngine" not in PLATFORM_URLS
+
 
 class TestGenerateHtml:
     def test_creates_file(self):
@@ -127,15 +130,19 @@ class TestGenerateHtml:
 
     def test_historical_aliases_combined_in_report(self, tmp_path, monkeypatch):
         monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
-        df = _sample_df().iloc[:4].copy()
-        df["software"] = ["TeamUnify", "GoMotion", "SportsEngine Motion", "SportsEngine HQ"]
-        df["category"] = ["Swim-specific"] * 3 + ["Sports management"]
+        df = _sample_df().iloc[:5].copy()
+        df["software"] = [
+            "TeamUnify", "GoMotion", "SportsEngine Motion", "SportsEngine HQ", "SportsEngine",
+        ]
+        df["category"] = ["Swim-specific"] * 3 + ["Sports management"] * 2
         original = df.copy()
         out = tmp_path / "report.html"
         generate_html(df, out)
         html = out.read_text(encoding="utf-8")
         assert "TeamUnify" not in html
         assert "GoMotion" not in html
+        assert ">SportsEngine<" not in html
+        assert ">Unknown / Custom<" in html
         assert ">3<" in html
         for platform in ["SportsEngine Motion", "SportsEngine HQ"]:
             assert f'href="{PLATFORM_URLS[platform]}"' in html
