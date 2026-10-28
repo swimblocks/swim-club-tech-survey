@@ -62,10 +62,15 @@ PLATFORMS = {
         "header_patterns": [],
         "category": "Swim-specific",
     },
-    # GoMotion is the #1 platform for Canadian clubs (successor to TeamUnify)
-    "GoMotion": {
-        "url_patterns": [r"gomotionapp\.com"],
-        "text_patterns": [r"gomotionapp", r"gomotion"],
+    # TeamUnify and GoMotion became SportsEngine Motion in November 2024.
+    # Keep product-specific evidence ahead of SportsEngine HQ signatures.
+    "SportsEngine Motion": {
+        "url_patterns": [
+            r"gomotionapp\.com", r"motion\.sportsengine\.com", r"teamunify\.com",
+        ],
+        "text_patterns": [
+            r"sportsengine\s*motion", r"gomotionapp", r"gomotion", r"team\s*unify",
+        ],
         "header_patterns": [],
         "category": "Swim-specific",
     },
@@ -141,12 +146,6 @@ PLATFORMS = {
         "header_patterns": [r"x-duda-"],
         "category": "CMS / Website builder",
     },
-    "TeamUnify": {
-        "url_patterns": [r"teamunify\.com"],
-        "text_patterns": [r"teamunify", r"team\s*unify"],
-        "header_patterns": [],
-        "category": "Swim-specific",
-    },
     "Amilia": {
         "url_patterns": [r"amilia\.com", r"app\.amilia\.com"],
         "text_patterns": [r"amilia"],
@@ -190,9 +189,11 @@ PLATFORMS = {
         "category": "Swim-specific",
     },
     # ---- General sports management ----
-    "SportsEngine": {
-        "url_patterns": [r"sportsengine\.com", r"ngin\.com", r"sportsenginehq\.com"],
-        "text_patterns": [r"sportsengine", r"ngin\.com"],
+    "SportsEngine HQ": {
+        "url_patterns": [
+            r"sportsengine\.com/hq(?:[/?#]|$)", r"ngin\.com", r"sportsenginehq\.com",
+        ],
+        "text_patterns": [r"sportsengine\s*hq\b", r"ngin\.com"],
         "header_patterns": [],
         "category": "Sports management",
     },

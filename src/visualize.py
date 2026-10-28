@@ -19,6 +19,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.classify import normalize_platform_aliases
+
 # Colour palette (20 distinct colours)
 COLOURS = [
     "#2563EB", "#DC2626", "#16A34A", "#CA8A04", "#9333EA",
@@ -30,11 +32,10 @@ COLOURS = [
 # Homepage URLs for each known platform (used to make bar labels clickable)
 PLATFORM_URLS = {
     "Commit":                   "https://www.commitswimming.com",
-    "GoMotion":                 "https://www.gomotionapp.com",
+    "SportsEngine Motion":      "https://motion.sportsengine.com",
     "PoolQ":                    "https://poolq.net",
     "Amilia":                   "https://www.amilia.com",
     "Uplifter":                 "https://www.uplifter.ca",
-    "TeamUnify":                "https://www.teamunify.com",
     "Club Assistant":           "https://www.clubassistant.com",
     "SwimTopia":                "https://www.swimtopia.com",
     "Swimmingly":               "https://goswimmingly.com",
@@ -46,6 +47,7 @@ PLATFORM_URLS = {
     "GoalLine (Stack Sports)":  "https://www.goalline.ca",
     "Jonas Club Software":      "https://www.jonasclub.com",
     "SportsEngine":             "https://www.sportsengine.com",
+    "SportsEngine HQ":          "https://www.sportsengine.com/hq",
     "TeamSnap":                 "https://www.teamsnap.com",
     "Jackrabbit":               "https://www.jackrabbittech.com",
     "iClass Pro":               "https://www.iclasspro.com",
@@ -394,6 +396,7 @@ _HTML_HEAD = """<!DOCTYPE html>
 
 
 def generate_html(df, output_path):
+    df = normalize_platform_aliases(df)
     pal = _platform_colours(df["software"].unique())
 
     charts_html = ""

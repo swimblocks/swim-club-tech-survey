@@ -5,6 +5,8 @@ Splits "Unknown / Custom" into more meaningful buckets:
   - University / Institution  (university, CÉGEP, college club pages)
   - Quebec Custom Site        (QC clubs with bespoke French-language sites)
   - No Website                (invalid URLs such as Bing search pages)
+
+Normalizes historical TeamUnify / GoMotion labels to SportsEngine Motion.
 """
 
 import re
@@ -25,13 +27,27 @@ _UNIV_NAME = re.compile(
 
 _INVALID_URL = re.compile(r"bing\.com/search|google\.com/search", re.I)
 
+PLATFORM_ALIASES = {
+    "TeamUnify": "SportsEngine Motion",
+    "GoMotion": "SportsEngine Motion",
+}
+
+
+def normalize_platform_aliases(df: pd.DataFrame) -> pd.DataFrame:
+    """Return a copy with historical platform labels mapped to current products."""
+    df = df.copy()
+    legacy = df["software"].isin(PLATFORM_ALIASES)
+    df["software"] = df["software"].replace(PLATFORM_ALIASES)
+    df.loc[legacy, "category"] = "Swim-specific"
+    return df
+
 
 def reclassify(df: pd.DataFrame) -> pd.DataFrame:
     """
     Apply in-place reclassifications to a results DataFrame.
     Returns the modified DataFrame.
     """
-    df = df.copy()
+    df = normalize_platform_aliases(df)
 
     for i, row in df.iterrows():
         if row["software"] != "Unknown / Custom":

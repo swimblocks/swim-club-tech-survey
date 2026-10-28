@@ -17,9 +17,9 @@ from src.visualize import (
 def _sample_df():
     return pd.DataFrame([
         {"name": "Club A", "province": "ON", "province_name": "Ontario",
-         "software": "GoMotion", "category": "Swim-specific", "members": None, "website": "https://a.com"},
+         "software": "SportsEngine Motion", "category": "Swim-specific", "members": None, "website": "https://a.com"},
         {"name": "Club B", "province": "ON", "province_name": "Ontario",
-         "software": "GoMotion", "category": "Swim-specific", "members": None, "website": "https://b.com"},
+         "software": "SportsEngine Motion", "category": "Swim-specific", "members": None, "website": "https://b.com"},
         {"name": "Club C", "province": "BC", "province_name": "British Columbia",
          "software": "WordPress", "category": "CMS / Website builder", "members": None, "website": "https://c.com"},
         {"name": "Club D", "province": "QC", "province_name": "Quebec",
@@ -49,13 +49,13 @@ class TestOverallChartHtml:
         html = _overall_chart_html(_sample_df())
         assert ">No Website<" not in html
 
-    def test_includes_gomotion(self):
+    def test_includes_sportsengine_motion(self):
         html = _overall_chart_html(_sample_df())
-        assert "GoMotion" in html
+        assert "SportsEngine Motion" in html
 
-    def test_gomotion_is_link(self):
+    def test_sportsengine_motion_is_link(self):
         html = _overall_chart_html(_sample_df())
-        assert f'href="{PLATFORM_URLS["GoMotion"]}"' in html
+        assert f'href="{PLATFORM_URLS["SportsEngine Motion"]}"' in html
 
     def test_poolq_is_link(self):
         html = _overall_chart_html(_sample_df())
@@ -73,7 +73,7 @@ class TestOverallChartHtml:
 
     def test_bar_count_shown(self):
         html = _overall_chart_html(_sample_df())
-        # GoMotion has 2 clubs
+        # SportsEngine Motion has 2 clubs
         assert ">2<" in html
 
     def test_empty_df_returns_no_data(self):
@@ -88,7 +88,7 @@ class TestPlatformUrls:
             assert url.startswith("https://"), f"{name} URL should start with https://"
 
     def test_major_platforms_present(self):
-        for platform in ["GoMotion", "PoolQ", "WordPress", "Wix", "Amilia", "TeamUnify"]:
+        for platform in ["SportsEngine Motion", "SportsEngine HQ", "PoolQ", "WordPress", "Wix", "Amilia"]:
             assert platform in PLATFORM_URLS, f"{platform} missing from PLATFORM_URLS"
 
 
@@ -122,8 +122,24 @@ class TestGenerateHtml:
             out = Path(tmp) / "report.html"
             generate_html(_sample_df(), out)
             html = out.read_text(encoding="utf-8")
-            # GoMotion (2 clubs) should win, not No Website (1 club, excluded)
-            assert "GoMotion" in html
+            # SportsEngine Motion (2 clubs) should win, not No Website (1 club, excluded)
+            assert "SportsEngine Motion" in html
+
+    def test_historical_aliases_combined_in_report(self, tmp_path, monkeypatch):
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+        df = _sample_df().iloc[:4].copy()
+        df["software"] = ["TeamUnify", "GoMotion", "SportsEngine Motion", "SportsEngine HQ"]
+        df["category"] = ["Swim-specific"] * 3 + ["Sports management"]
+        original = df.copy()
+        out = tmp_path / "report.html"
+        generate_html(df, out)
+        html = out.read_text(encoding="utf-8")
+        assert "TeamUnify" not in html
+        assert "GoMotion" not in html
+        assert ">3<" in html
+        for platform in ["SportsEngine Motion", "SportsEngine HQ"]:
+            assert f'href="{PLATFORM_URLS[platform]}"' in html
+        pd.testing.assert_frame_equal(df, original)
 
     def test_data_table_present(self):
         with tempfile.TemporaryDirectory() as tmp:

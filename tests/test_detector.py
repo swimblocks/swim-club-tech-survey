@@ -38,7 +38,7 @@ class TestRedirectDetection:
             url="https://www.gomotionapp.com/team/onaa/page/home"
         )
         result = detect("https://myclub.ca")
-        assert result["software"] == "GoMotion"
+        assert result["software"] == "SportsEngine Motion"
 
     @patch("src.detector._get_session")
     def test_poolq_final_url(self, mock_sess):
@@ -54,7 +54,7 @@ class TestRedirectDetection:
             url="https://www.teamunify.com/team/canta/page/home"
         )
         result = detect("https://oldclub.ca")
-        assert result["software"] == "TeamUnify"
+        assert result["software"] == "SportsEngine Motion"
 
 
 class TestScriptSrcDetection:
@@ -62,7 +62,7 @@ class TestScriptSrcDetection:
     def test_gomotion_script_src(self, mock_sess):
         html = '<script src="https://www.gomotionapp.com/js/main.js"></script>'
         mock_sess.return_value.get.return_value = _page(html)
-        assert detect("https://example.com")["software"] == "GoMotion"
+        assert detect("https://example.com")["software"] == "SportsEngine Motion"
 
     @patch("src.detector._get_session")
     def test_jerseywatch_script_src(self, mock_sess):
@@ -117,7 +117,7 @@ class TestTextPatternDetection:
     def test_gomotion_text(self, mock_sess):
         html = '<a href="/login">Powered by gomotionapp</a>'
         mock_sess.return_value.get.return_value = _page(html)
-        assert detect("https://example.com")["software"] == "GoMotion"
+        assert detect("https://example.com")["software"] == "SportsEngine Motion"
 
     @patch("src.detector._get_session")
     def test_jonas_powered_by(self, mock_sess):
@@ -145,6 +145,73 @@ class TestTextPatternDetection:
         html = '<a href="https://app.amilia.com/store/en/myclub/shop">Register</a>'
         mock_sess.return_value.get.return_value = _page(html)
         assert detect("https://example.com")["software"] == "Amilia"
+
+
+class TestSportsEngineProducts:
+    @pytest.mark.parametrize("domain", [
+        "www.gomotionapp.com", "motion.sportsengine.com", "www.teamunify.com",
+    ])
+    @patch("src.detector._get_session")
+    def test_tenant_url_with_parent_branding(self, mock_sess, domain):
+        mock_sess.return_value.get.return_value = _page(
+            '<footer><a href="https://www.sportsengine.com">Powered by SportsEngine</a></footer>',
+            final_url=f"https://{domain}/team/example/page/home",
+        )
+        result = detect("https://example.com")
+        assert result["software"] == "SportsEngine Motion"
+        assert result["category"] == "Swim-specific"
+
+    @pytest.mark.parametrize("domain", [
+        "www.gomotionapp.com", "motion.sportsengine.com", "www.teamunify.com",
+    ])
+    @patch("src.detector._get_session")
+    def test_assets_with_parent_branding(self, mock_sess, domain):
+        mock_sess.return_value.get.return_value = _page(
+            f'<script src="https://{domain}/js/main.js"></script>'
+            '<footer>Powered by SportsEngine</footer>'
+        )
+        assert detect("https://example.com")["software"] == "SportsEngine Motion"
+
+    @pytest.mark.parametrize("brand", [
+        "SportsEngine Motion", "sportsengine motion", "TeamUnify", "Team Unify", "GoMotion",
+    ])
+    @patch("src.detector._get_session")
+    def test_current_and_legacy_branding(self, mock_sess, brand):
+        mock_sess.return_value.get.return_value = _page(f"Powered by {brand}")
+        assert detect("https://example.com")["software"] == "SportsEngine Motion"
+
+    @pytest.mark.parametrize("url", [
+        "https://club.sportngin.com/",
+        "https://www.sportsenginehq.com/",
+        "https://www.sportsengine.com/hq",
+    ])
+    @patch("src.detector._get_session")
+    def test_hq_url(self, mock_sess, url):
+        mock_sess.return_value.get.return_value = _page(
+            "Powered by SportsEngine", final_url=url,
+        )
+        result = detect("https://example.com")
+        assert result["software"] == "SportsEngine HQ"
+        assert result["category"] == "Sports management"
+
+    @patch("src.detector._get_session")
+    def test_hq_assets(self, mock_sess):
+        mock_sess.return_value.get.return_value = _page(
+            '<script src="https://cdn1.sportngin.com/app.js"></script>'
+        )
+        assert detect("https://example.com")["software"] == "SportsEngine HQ"
+
+    @patch("src.detector._get_session")
+    def test_hq_branding(self, mock_sess):
+        mock_sess.return_value.get.return_value = _page("Powered by SportsEngine HQ")
+        assert detect("https://example.com")["software"] == "SportsEngine HQ"
+
+    @patch("src.detector._get_session")
+    def test_parent_branding_does_not_identify_product(self, mock_sess):
+        mock_sess.return_value.get.return_value = _page(
+            '<a href="https://www.sportsengine.com">Powered by SportsEngine</a>'
+        )
+        assert detect("https://example.com")["software"] == "Unknown / Custom"
 
 
 class TestHeaderDetection:
