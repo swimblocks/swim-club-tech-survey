@@ -59,15 +59,30 @@ For each club website:
 Platforms detected:
 
 **Swim-specific**
-TeamUnify · Amilia · Uplifter · Club Assistant · SwimTopia · Swimmingly · Webpoint · Swim Canada Online · Commit
+SportsEngine Motion · Amilia · Uplifter · Club Assistant · SwimTopia · Swimmingly · Webpoint · Swim Canada Online · Commit
 
 **General sports management**
-SportsEngine · TeamSnap · Jackrabbit · iClass Pro · Sporty HQ · Active Network · Regatta Network · rTeam · FinalForms
+SportsEngine HQ · TeamSnap · Jackrabbit · iClass Pro · Sporty HQ · Active Network · Regatta Network · rTeam · FinalForms
 
 **CMS / Website builders**
 WordPress · Wix · Squarespace · Weebly · Google Sites · Jimdo · Webflow · Drupal · Joomla
 
 Falls back to **"Unknown / Custom"** when no signature matches.
+
+**SportsEngine products:** TeamUnify and GoMotion became **SportsEngine Motion** in
+November 2024. Legacy `teamunify.com` and `gomotionapp.com` tenant URLs/assets,
+`motion.sportsengine.com`, and both historical brand names identify SportsEngine Motion.
+**SportsEngine HQ** is a separate product, identified by HQ branding, HQ URLs, or
+`ngin.com` / `sportngin.com` signatures, excluding shared authentication at
+`user.sportngin.com`. Generic "Powered by SportsEngine" branding and shared
+authentication alone do not identify either product.
+
+Cached CSVs and reports generated from past datasets normalize **TeamUnify** and
+**GoMotion** labels to **SportsEngine Motion**. Historical **SportsEngine** labels
+become **Unknown / Custom** before the usual post-detection reclassification:
+the parent brand is not a product and the old signatures did not reliably
+distinguish products. Use `--no-cache` to detect the actual products afresh.
+Published release datasets are not rewritten.
 
 ### 3 — Report generation (`src/visualize.py`)
 

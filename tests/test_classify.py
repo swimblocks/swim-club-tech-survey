@@ -120,11 +120,11 @@ class TestPriorityOrder:
 
 
 class TestNonUnknownRowsUntouched:
-    def test_gomotion_unchanged(self):
-        df = _df([("GoMotion Club", "ON",
-                   "https://gomotionapp.com/team/abc", "GoMotion")])
+    @pytest.mark.parametrize("software", ["SportsEngine Motion", "SportsEngine HQ"])
+    def test_sportsengine_unchanged(self, software):
+        df = _df([("Example Club", "ON", "https://example.com", software)])
         out = reclassify(df)
-        assert out.iloc[0]["software"] == "GoMotion"
+        assert out.iloc[0]["software"] == software
 
     def test_wordpress_unchanged(self):
         df = _df([("WP Club", "QC", "https://wpclub.ca", "WordPress")])
@@ -136,3 +136,22 @@ class TestNonUnknownRowsUntouched:
                    "https://www.lesloutres.com", "Unknown / Custom")])
         reclassify(df)
         assert df.iloc[0]["software"] == "Unknown / Custom"
+
+
+class TestHistoricalPlatformAliases:
+    def test_generic_brand_is_not_a_product(self):
+        df = _df([("Example Club", "ON", "https://example.com", "SportsEngine")])
+        out = reclassify(df)
+        assert out.iloc[0]["software"] == "Unknown / Custom"
+        assert out.iloc[0]["category"] == "Unknown / Custom"
+        assert df.iloc[0]["software"] == "SportsEngine"
+        pd.testing.assert_frame_equal(reclassify(out), out)
+
+    @pytest.mark.parametrize("alias", ["TeamUnify", "GoMotion"])
+    def test_legacy_platform_normalized(self, alias):
+        df = _df([("Example Club", "QC", "https://example.com", alias)])
+        out = reclassify(df)
+        assert out.iloc[0]["software"] == "SportsEngine Motion"
+        assert out.iloc[0]["category"] == "Swim-specific"
+        assert df.iloc[0]["software"] == alias
+        pd.testing.assert_frame_equal(reclassify(out), out)
