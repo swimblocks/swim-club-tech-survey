@@ -1,0 +1,12 @@
+name: Readability review
+on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize, reopened]
+permissions:
+  contents: read
+  pull-requests: write   # the summary comment
+  id-token: write        # signing in to Google Cloud and to the Claude GitHub App
+jobs:
+  review:
+    uses: swimblocks/.github/.github/workflows/reusable-readability-review.yml@main
+    secrets: inherit
